@@ -3,12 +3,12 @@ name: auto check
 on:
   workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [ master, main ]
     paths-ignore:
       - 'README.md'
       - 'imgs/**'
   schedule:
-    - cron: '0 4,10 * * *'
+    - cron: '0 4,10 * * *'  # UTC; 北京时间 12:00、18:00
 
 jobs:
   build:
@@ -50,8 +50,8 @@ jobs:
       env:
         PUSHDEER_SENDKEY: ${{ secrets.PUSHDEER_SENDKEY }}
         GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
-        GLADOS_EXCHANGE_PLAN: ${{ secrets.GLADOS_EXCHANGE_PLAN }}
-        GLADOS_VERBOSE: ${{ secrets.GLADOS_VERBOSE }}
+        GLADOS_EXCHANGE_PLAN: ${{ secrets.GLADOS_EXCHANGE_PLAN || 'plan500' }}
+        GLADOS_VERBOSE: ${{ secrets.GLADOS_VERBOSE || 'false' }}
 
     - name: Keep alive
       uses: liskin/gh-workflow-keepalive@v1 
