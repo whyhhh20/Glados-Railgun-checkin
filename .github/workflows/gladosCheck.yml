@@ -8,7 +8,7 @@ on:
       - 'README.md'
       - 'imgs/**'
   schedule:
-    - cron: '0 4,10 * * *'  # UTC; 北京时间 12:00、18:00
+    - cron: '0 4,10 * * *'  # UTC; ???? 12:00?18:00
 
 jobs:
   build:
@@ -23,7 +23,7 @@ jobs:
       matrix:
         python-version: [3.13]
 
-    # 这里加入全局环境变量，强制后续所有第三方 actions 兼容 Node.js 24 运行环境
+    # ???????????????????? actions ?? Node.js 24 ????
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -36,14 +36,24 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # 安装 python 库
+    # ?? python ?
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install requests
         pip install pypushdeer
 
-    # 执行 签到脚本
+    # ??????????? Cookie ???????
+    - name: Validate required secrets
+      run: |
+        if [ -z "$GLADOS_COOKIES" ]; then
+          echo "::error::GLADOS_COOKIES repository secret is required."
+          exit 1
+        fi
+      env:
+        GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
+
+    # ??????
     - name: Running checkin
       run: |
         python checkin.py
