@@ -8,13 +8,13 @@ on:
       - 'README.md'
       - 'imgs/**'
   schedule:
-    - cron: '0 4,10 * * *'  # UTC; ???? 12:00?18:00
+    - cron: '0 4,10 * * *'  # UTC; Beijing 12:00 and 18:00
 
 jobs:
   build:
     name: glados/railgun checkin
     runs-on: ubuntu-latest
-      
+
     permissions:
       contents: read
       actions: write
@@ -23,7 +23,7 @@ jobs:
       matrix:
         python-version: [3.13]
 
-    # ???????????????????? actions ?? Node.js 24 ????
+    # Force third-party JavaScript actions to use the Node.js 24 runtime.
     env:
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
@@ -36,14 +36,14 @@ jobs:
       with:
         python-version: ${{ matrix.python-version }}
 
-    # ?? python ?
+    # Install Python dependencies.
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install requests
         pip install pypushdeer
 
-    # ??????????? Cookie ???????
+    # Fail fast instead of silently succeeding when GLADOS_COOKIES is missing.
     - name: Validate required secrets
       run: |
         if [ -z "$GLADOS_COOKIES" ]; then
@@ -53,7 +53,7 @@ jobs:
       env:
         GLADOS_COOKIES: ${{ secrets.GLADOS_COOKIES }}
 
-    # ??????
+    # Run check-in script.
     - name: Running checkin
       run: |
         python checkin.py
@@ -64,8 +64,8 @@ jobs:
         GLADOS_VERBOSE: ${{ secrets.GLADOS_VERBOSE || 'false' }}
 
     - name: Keep alive
-      uses: liskin/gh-workflow-keepalive@v1 
-        
+      uses: liskin/gh-workflow-keepalive@v1
+
     - name: Delete workflow runs
       uses: Mattraks/delete-workflow-runs@v2
       with:
